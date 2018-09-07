@@ -15,7 +15,7 @@ if [ -f  ${WS_PROXY_EXE} ]; then
         chmod +x ${WS_PROXY_EXE}
 fi
 
-echo '<URL to UPSTRAEM>' > $WS_PROXY_DIR/url.conf
+echo 'http://localhost:80' > $WS_PROXY_DIR/url.conf
 echo '<Cookie to UPSTRAEM>' > $WS_PROXY_DIR/cookie.conf
 
 SUBJECT="/C=IL/O=SAP/OU=DevX/L=Raanana/ST=Israel/CN=OnPremiseWorkspaceProxy"
@@ -24,6 +24,6 @@ echo "Generating Root certificate for CA...\n"
 openssl req -new -newkey 2048 -nodes -x509 -keyout $WS_PROXY_DIR/ca.key -subj "${SUBJECT}" \
      -days 1024  -out $WS_PROXY_DIR/ca.crt
 
-$WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
-    -url $WS_PROXY_DIR/url.conf -cookie $WS_PROXY_DIR/cookie.conf -addr ":8887" run
+"$WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
+    -url $WS_PROXY_DIR/url.conf -cookie $WS_PROXY_DIR/cookie.conf -addr :8887 run"
 
