@@ -18,19 +18,11 @@ fi
 echo '<URL to UPSTRAEM>' > $WS_PROXY_DIR/url.conf
 echo '<Cookie to UPSTRAEM>' > $WS_PROXY_DIR/cookie.conf
 
-openssl genrsa -out $WS_PROXY_DIR/ca.key 2048
-SUBJECT=/C=IL/O=SAP/OU=DevX/L=Raanana/ST=Israel/CN=OnPremise Workspace Proxy
+SUBJECT="/C=IL/O=SAP/OU=DevX/L=Raanana/ST=Israel/CN=OnPremiseWorkspaceProxy"
 
-openssl req -new -newkey rsa:4096 -key $WS_PROXY_DIR/ca.key \
-    -out $WS_PROXY_DIR/ca.csr \
-    -subj ${SUBJECT}
-
-openssl req -new -newkey -sha256 -days 365 -nodes -x509 \
-    -subj ${SUBJECT} \
-    -out  $WS_PROXY_DIR/ca.crt
-
-
-#openssl req -new -nodes -x509 -key $WS_PROXY_DIR/ca.key  -sha256 -days 1024  -out $WS_PROXY_DIR/ca.crt
+echo "Generating Root certificate for CA...\n"
+openssl req -new -newkey 2048 -nodes -x509 -keyout $WS_PROXY_DIR/ca.key -subj "${SUBJECT}" \
+     -days 1024  -out $WS_PROXY_DIR/ca.crt
 
 $WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
     -urlFile $WS_PROXY_DIR/url.conf -cookieFile $WS_PROXY_DIR/cookie.conf run
