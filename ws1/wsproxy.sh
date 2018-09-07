@@ -24,6 +24,6 @@ echo "Generating Root certificate for CA...\n"
 openssl req -new -newkey 2048 -nodes -x509 -keyout $WS_PROXY_DIR/ca.key -subj "${SUBJECT}" \
      -days 1024  -out $WS_PROXY_DIR/ca.crt
 
-echo "$WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
+"$WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
     -urlFile $WS_PROXY_DIR/url.conf -cookieFile $WS_PROXY_DIR/cookie.conf run"
 
