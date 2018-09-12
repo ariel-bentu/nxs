@@ -10,7 +10,7 @@ mkdir -p ${WS_PROXY_DIR}
 if [ -f  ${WS_PROXY_EXE} ]; then 
         echo "Files are up to date."
     else 
-        echo "Files are not yet install, installing..."
+        echo "Files are not yet installed, installing..."
         curl -L https://github.com/ariel-bentu/nxs/raw/master/ws1/bin/ws_proxy --output $WS_PROXY_EXE
         chmod +x ${WS_PROXY_EXE}
 
@@ -33,6 +33,6 @@ if [ ! -f ${WS_PROXY_DIR}/url.conf ]; then
 fi
 
 
-$WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
+printf $WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
     -url $WS_PROXY_DIR/url.conf -cookie $WS_PROXY_DIR/cookie.conf -addr :8887 &
 
