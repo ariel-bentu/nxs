@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>WebSocket Test</title>
+<script src="https://cdn.socket.io/socket.io-1.0.6.js"></script>
+<script language="javascript" type="text/javascript">
+ 
+var websocket = null;
+
+function init()
+
+{
+    var wsUri = 'ws://localhost:32770/pty?token=';
+
+    writeToScreen('Connecting...');
+    if (websocket != null) {
+        doClose();
+    }
+    websocket = new WebSocket(wsUri);
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+}
+
+
+function onOpen(evt)
+{
+  writeToScreen("CONNECTED");
+
+  InitServer()
+}
+
+function onClose(evt)
+{
+  writeToScreen("DISCONNECTED");
+  websocket = null;
+}
+
+function onMessage(evt)
+{
+    consoleOut(evt.data);
+    //websocket.close();
+}
+
+function onError(evt)
+{
+  writeToScreen(evt.data);
+}
+
+function InitServer() {
+    doSend("printf '" + document.cookie + "' > ~/che/.ws_proxy/cookie.conf\\r");
+    var url = window.location.href
+    var pos = url.indexOf("/", 8)
+    if (pos > 0) {
+        url = url.substr(0, pos)
+    }
+    doSend("printf '" + url + "' > ~/che/.ws_proxy/url.conf\\r");
+}
+
+function doSend(message)
+{
+ 
+  var msg= "{\"type\":\"data\",\"data\":\""
+  msg += message + "\"}"
+  websocket.send(msg);
+  writeToScreen("SENT: " + msg);
+}
+
+function doClose() {
+    writeToScreen('Disconnecting...');
+    if (websocket != null) {
+        websocket.close();
+        websocket = null;
+    }
+}
+
+function consoleKeyPressed() {
+/*    if (event.code == "Enter") {
+        //consoleArea.value += ">";
+        consoleArea.setSelectionRange(consoleArea.value.length,consoleArea.value.length);
+
+        if (websocket == null) {
+            writeToScreen('Message not sent - re/connect');
+            return;
+        }
+        msg = getLine();
+        doSend(msg);
+
+    }
+*/
+    event.preventDefault();
+    if (event.keyCode == 67 && event.ctrlKey) { 
+        //ctrl-break
+        doSend("\\u0003");
+        return;
+    }
+ 
+    switch(event.keyCode) {
+        case 39: //right arrow
+            doSend("\\u001b[C")
+            break;
+        case 37: //left arrow
+            doSend("\\u001b[D")
+            break;
+        case 17: 
+            //ctrl
+            break;
+        case 220:
+            doSend("\\");
+            break;
+          case 191:
+            doSend("/");
+            break;
+         case 190:
+            doSend(".");
+            break;
+         case 13:
+            doSend("\\r");
+            break;
+        case 9:
+            doSend("\\t");
+            break;
+       default: 
+       var charStr = String.fromCharCode(event.keyCode)
+        if (!event.shiftKey)
+            charStr = charStr.toLowerCase();
+        doSend(charStr);
+    }
+}
+function getLine() {
+    line ="";
+    var lastDolar = 0
+    var endOfLine =  consoleArea.selectionStart-2;
+    i = endOfLine; //the \n> and 0 based
+    val = consoleArea.value;
+    while (i > 0 && val[i] != '\n' ) {
+        if (val[i] == "$" )
+            lastDolar = i
+        i--;
+    }
+    return val.substr(lastDolar+1, endOfLine - lastDolar);
+    
+
+    //if (line.length > 0 && line[0] == '>') {
+    //    line = line.substring(1);
+    //}
+    //return line;
+}
+
+function writeToScreen(message)
+{
+    statusDiv.innerHTML += '</br>' +message;
+    window.setTimeout(clearStatus, 2000);
+}
+
+function consoleOut (msg) {
+    if (msg.charCodeAt(0) == 27)
+        msg = msg.substring(4)
+    //prev = consoleArea.value == undefined ? "" : consoleArea.value 
+    consoleArea.value += msg;
+    consoleArea.focus();
+    consoleArea.setSelectionRange(consoleArea.value.length,consoleArea.value.length);
+
+}
+
+function clearStatus() {
+    statusDiv.innerHTML = ""
+}
+//window.addEventListener("load", init, false);
+
+</script>
+
+<h2>WebSocket Test</h2>
+<input type="button" name="Connect" value="Connect" onclick="init()"/> <input id="Address" type="text" value="ws://localhost:8081"/>
+<input type="button" name="Disconnect" value="Disconnect" onclick="doClose()"/>
+</br>
+<textarea id="consoleArea"  onKeyDown="consoleKeyPressed()" cols="80" rows="30" style="width:100%; height:150px;" ></textarea> 
+</br>
+<div id="statusDiv"></div>
