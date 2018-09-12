@@ -34,5 +34,5 @@ fi
 
 
 $WS_PROXY_EXE -pem $WS_PROXY_DIR/ca.crt -key $WS_PROXY_DIR/ca.key \
-    -url $WS_PROXY_DIR/url.conf -cookie $WS_PROXY_DIR/cookie.conf -addr :8887 
+    -url $WS_PROXY_DIR/url.conf -cookie $WS_PROXY_DIR/cookie.conf -addr :8887 &
 
