@@ -22,6 +22,8 @@ if [ ! -f ${WS_PROXY_DIR}/url.conf ]; then
         printf 'http://localhost:80' > $WS_PROXY_DIR/url.conf
         printf 'TODO Cookie to UPSTRAEM' > $WS_PROXY_DIR/cookie.conf
 
+        chmod 666 $WS_PROXY_DIR/url.conf  $WS_PROXY_DIR/cookie.conf
+
         SUBJECT="/C=IL/O=SAP/OU=DevX/L=Raanana/ST=Israel/CN=OnPremiseWorkspaceProxy"
 
         echo "Generating Root certificate for CA...\n"
